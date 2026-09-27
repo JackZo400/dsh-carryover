@@ -1,5 +1,7 @@
 # dsh-carryover
 
+[English](README.en.md) | 简体中文
+
 给 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)（dsh）用的**会话交接**插件。
 
 一句话：**开新会话之前，先把上一段聊过的话写成笔记；笔记真的落到盘上了，才允许删掉旧会话轨迹。**
@@ -234,18 +236,6 @@ MIT © 2026 JackZo400
 
 ---
 
-## English (short)
+## English
 
-**dsh-carryover** — session handover for [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness).
-
-Starting a new session usually means losing everything from the previous one. This plugin makes
-the cleanup order a hard rule:
-
-> **Summarize first. Purge only if the note was written *and* read back from disk.**
-> Any failure — model error, disk error, unreadable transcript — deletes nothing.
-
-It exposes a `carryover` service for host plugins, three tools (`carryover_status`,
-`carryover_note`, `carryover_run`), and a system-prompt hook that feeds the note back into the
-next session. `src/carryover.js` has zero dsh imports: filesystem, clock, summarizer and
-transcript reader are all injectable, so the tests run the whole delete/keep decision with fake
-sessions and no network. MIT licensed.
+→ Full English README: [README.en.md](README.en.md)
