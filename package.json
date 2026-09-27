@@ -1,0 +1,48 @@
+{
+  "name": "dsh-carryover",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "给 dsh 的会话交接：开新会话之前先把上一段摘要成笔记，笔记落盘核对成功才允许删旧轨迹；摘要失败就一条都不删。新会话自动带上这份笔记。",
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "cordis",
+    "session",
+    "carryover",
+    "context",
+    "compaction",
+    "summarize",
+    "memory"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JackZo400/dsh-carryover.git"
+  },
+  "exports": {
+    ".": "./index.js",
+    "./carryover": "./src/carryover.js",
+    "./package.json": "./package.json"
+  },
+  "icon": "./icon.svg",
+  "meta": {
+    "title": "Carryover",
+    "description": "开会话先摘要、摘要成功才清理；新会话自动接上上一段"
+  },
+  "files": [
+    "index.js",
+    "src",
+    "icon.svg",
+    "cordis.patch.yml",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node test/selftest.mjs && node test/plugin-selftest.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  }
+}

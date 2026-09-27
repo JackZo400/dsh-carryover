@@ -1,0 +1,57 @@
+# dsh-carryover 的示例配置（bundle patch）。
+#
+# 装完至少要确认三件事：
+#   1. sessionsRoot 指对了（默认 ~/.dsh/sessions；不在这儿就用环境变量或配置改）
+#   2. summary.apiKey 有值（建议走环境变量 DSH_CARRYOVER_API_KEY，别把 key 写进配置文件）
+#   3. sessionMapPath 那份映射是宿主在维护的（见 README 的「映射文件」一节）——
+#      没有它，插件既不知道该交接谁，也不知道新会话属于哪条通道
+- insert:
+    - id: carryover
+      name: dsh-carryover
+      config:
+        # 总开关。交接出问题时整个关掉，插件变成什么都不做
+        enabled: true
+
+        # dsh 的会话轨迹根目录（里面是 <projectKey>/<sessionId>/session.vN.jsonl.zstd）
+        sessionsRoot: ~/.dsh/sessions
+        # 会话投影缓存（标题/统计那份 json）。删会话时顺手清，不然会留下孤儿
+        projCacheRoot: ~/.dsh/storages/session_projcache/sessions
+        # 轨迹文件名：auto = 自己挑版本号最大的那个（dsh 的格式版本会往前走，别写死）
+        transcript: auto
+
+        # 工作目录：笔记、账本、日志默认都在这下面
+        workspace: .
+        # notesDir: ''          # 默认 <workspace>/memory/carryover
+        # sessionMapPath: ''    # 默认 <workspace>/tmp/session-map.json
+        # logPath: ''           # 默认 <workspace>/memory/carryover.log
+
+        # —— 新会话自动带上笔记 ——
+        inject: true
+        injectOrder: 40
+        injectHeading: '# 上一个会话留下的笔记（自动摘要，不是全本）'
+        maxInjectChars: 4000
+
+        # —— 摘要 ——
+        summary:
+          # 任何 OpenAI 兼容的接口：给根地址（或 /v1）都行，会自己补 /chat/completions
+          baseUrl: https://api.deepseek.com
+          # 强烈建议用环境变量：DSH_CARRYOVER_API_KEY（或 DEEPSEEK_API_KEY）
+          apiKey: ''
+          model: deepseek-chat
+          maxTokens: 900
+          # 留空 = 用内置提示词（「写给下一个自己的便条」，不是公文）
+          prompt: ''
+          # 想追加一句要求就写这儿（比如顺手抄一下这一轮新冒出来的说法）
+          extraPrompt: ''
+
+        # —— 闸门（这几个数字决定「删还是不删」）——
+        # 正文去空白后不到这个长度 = 太薄，不值得花一次模型调用（下面这个开关管它删不删）
+        minDialogueChars: 40
+        # true = 太薄的会话直接清掉（两句寒暄不值得留）；false = 再短也走一遍摘要
+        purgeThinSessions: true
+        # 摘要短于这个长度就当没摘到 —— 宁可不删
+        minSummaryChars: 10
+        # 摘要本身的上限；超了头尾各留一半地截断
+        maxSummaryChars: 1200
+        # 喂给摘要的正文上限
+        maxInputChars: 60000
